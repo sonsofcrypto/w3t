@@ -18,18 +18,9 @@
  *
  */
 require('dotenv').config();
-
+const Web3 = require("web3");
+const web3 = new Web3();
 const HDWalletProvider = require('@truffle/hdwallet-provider');
-const fs = require('fs');
-const mnemonic = fs.readFileSync(".env").toString().trim();
-
-const ETHER_SCAP_API_KEY = ""
-const INFURA_API_KEY = ""
-
-let ganacheProvider = new HDWalletProvider({
-  mnemonic: { phrase: process.env["GANACHE_MNEMONIC"] },
-  providerOrUrl: "http://127.0.0.1:7545"
-});
 
 module.exports = {
   /**
@@ -43,6 +34,37 @@ module.exports = {
    */
 
   networks: {
+    mainnet: {
+      provider: new HDWalletProvider({
+        mnemonic: { phrase: process.env["MAINNET_MNEMONIC"] },
+        providerOrUrl: process.env["MAINNET_INFURA_URL"]
+      }),
+      gasPrice: web3.utils.toWei('10', 'gwei'),
+      network_id: 1
+    },
+    ropsten: {
+      provider: new HDWalletProvider({
+        mnemonic: { phrase: process.env["ROPSTEN_MNEMONIC"] },
+        providerOrUrl: process.env["ROPSTEN_INFURA_URL"]
+      }),
+      network_id: 3,       // Ropsten's id
+      gas: 5500000,        // Ropsten has a lower block limit than mainnet
+      confirmations: 2,    // # of confs to wait between deployments. (default: 0)
+      timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
+      skipDryRun: true,     // Skip dry run before migrations? (default: false for public nets )
+      timeoutBlocks: 50000,
+      networkCheckTimeout: 1000000
+    },
+    ganache: { // Ganache local test RPC blockchain
+      provider: new HDWalletProvider({
+        mnemonic: { phrase: process.env["GANACHE_MNEMONIC"] },
+        providerOrUrl: "http://127.0.0.1:7545"
+      }),
+      network_id: 5777,
+      host: "127.0.0.1",
+      port: 7545,
+      gas: 30000000,
+    }
     // Useful for testing. The `development` name is special - truffle uses it by default
     // if it's defined here and no other network is specified at the command line.
     // You should run a client (like ganache-cli, geth or parity) in a separate terminal
@@ -65,26 +87,6 @@ module.exports = {
     // },
     // Useful for deploying to a public network.
     // NB: It's important to wrap the provider as a function.
-    ropsten: {
-      provider: () => new HDWalletProvider(mnemonic, `https://ropsten.infura.io/v3/` + INFURA_API_KEY),
-      network_id: 3,       // Ropsten's id
-      gas: 5500000,        // Ropsten has a lower block limit than mainnet
-      confirmations: 2,    // # of confs to wait between deployments. (default: 0)
-      timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
-      skipDryRun: true,     // Skip dry run before migrations? (default: false for public nets )
-      timeoutBlocks: 50000,
-      networkCheckTimeout: 1000000
-    },
-    ganache: { // Ganache local test RPC blockchain
-      provider: new HDWalletProvider({
-        mnemonic: { phrase: process.env["GANACHE_MNEMONIC"] },
-        providerOrUrl: "http://127.0.0.1:7545"
-      }),
-      network_id: 5777,
-      host: "127.0.0.1",
-      port: 7545,
-      gas: 30000000,
-    }
   },
 
   // Set default mocha options here, use special reporters etc.
@@ -131,6 +133,6 @@ module.exports = {
     'truffle-plugin-verify'
   ],
   api_keys: {
-    etherscan: ETHER_SCAP_API
+    etherscan: process.env["MAINNET_ETHERSCAN_KEY"]
   }
 };

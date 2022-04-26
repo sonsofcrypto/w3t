@@ -2,7 +2,9 @@
   "dependencies": {
     "@openzeppelin/contracts": "^4.4.2",
     "@truffle/hdwallet-provider": "^2.0.1",
-    "ethers": "^5.5.3"
+    "dotenv": "^16.0.0",
+    "ethers": "^5.5.3",
+    "web3": "^1.7.3"
   },
   "devDependencies": {
     "truffle-plugin-verify": "^0.5.21"

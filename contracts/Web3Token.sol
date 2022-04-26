@@ -15,10 +15,4 @@ contract Web3Token is ERC20PresetFixedSupply {
     ) {
         _owner = payable(msg.sender);
     }
-
-    function harakiri() public {
-        require(msg.sender == _owner, "Only owner can call this method");
-        selfdestruct(_owner);
-    }
-
 }
