@@ -17,10 +17,13 @@
  * phrase from a file you've .gitignored so it doesn't accidentally become public.
  *
  */
+
 require('dotenv').config();
 const Web3 = require("web3");
 const web3 = new Web3();
 const HDWalletProvider = require('@truffle/hdwallet-provider');
+const PrivateKeyProvider = require("truffle-privatekey-provider");
+
 
 module.exports = {
   /**
@@ -37,16 +40,18 @@ module.exports = {
     mainnet: {
       provider: new HDWalletProvider({
         mnemonic: { phrase: process.env["MAINNET_MNEMONIC"] },
-        providerOrUrl: process.env["MAINNET_INFURA_URL"]
+        providerOrUrl: process.env["MAINNET_INFURA_URL"],
+        chaiId: 1
       }),
       gasPrice: web3.utils.toWei('10', 'gwei'),
       network_id: 1
     },
     ropsten: {
       provider: new HDWalletProvider({
-        mnemonic: { phrase: process.env["ROPSTEN_MNEMONIC"] },
-        providerOrUrl: process.env["ROPSTEN_INFURA_URL"]
-      }),
+        mnemonic: { phrase: ropstenMnemonic },
+        providerOrUrl: ropstenURL,
+        chainId: 3
+      }),                  // new PrivateKeyProvider(ropstenMnemonic, ropstenURL),
       network_id: 3,       // Ropsten's id
       gas: 5500000,        // Ropsten has a lower block limit than mainnet
       confirmations: 2,    // # of confs to wait between deployments. (default: 0)
